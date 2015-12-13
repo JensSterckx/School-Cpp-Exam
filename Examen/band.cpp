@@ -1,7 +1,7 @@
 #include "band.h"
 
 Band::Band() {}
-Band::Band(char naam[], char fabrikant[], float prijs, float diameter, float breedte, float hoogte, float snelheidsindex, char seizoen)
+Band::Band(char naam[], char fabrikant[], float prijs, float diameter, float breedte, float hoogte, float snelheidsindex, char seizoen, int stock)
 {
 	std::cout << "#\tConstructed Band()#\n";
 	this->setNaam(naam);
@@ -12,6 +12,7 @@ Band::Band(char naam[], char fabrikant[], float prijs, float diameter, float bre
 	this->setHoogte(hoogte);
 	this->setSnelheidsIndex(snelheidsindex);
 	this->setSeizoen(seizoen);
+	this->setStock(stock);
 }
 
 Band::~Band()

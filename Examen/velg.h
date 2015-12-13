@@ -7,7 +7,7 @@ class Velg :
 {
 public:
 	Velg();
-	Velg(char[], char[], float, float, int, char[], bool);
+	Velg(char[], char[], float, float, int, char[], bool, int);
 	~Velg();
 
 	// SETTERS

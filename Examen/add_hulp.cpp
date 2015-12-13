@@ -9,6 +9,7 @@ void addBand(Bandencentrale* BC)
 {
 	char naam[20], fabrikant[64], seizoen;
 	float prijs, diameter, breedte, hoogte, snelheidsIndex;
+	int stock;
 
 	system("cls");
 	cout << "*            BAND TOEVOEGEN              *" << endl;
@@ -33,11 +34,14 @@ void addBand(Bandencentrale* BC)
 	cout << endl << "Geef de snelheidsIndex(float) v/h product: ";
 	cin >> snelheidsIndex;
 
+	cout << endl << "Geef de huidige stock(int) v/h product: ";
+	cin >> stock;
+
 	cin.ignore();
 	cout << endl << "Geef de seizoensindex(char) A(ll) Z(omer) W(inter) M(odder) v/h product: ";
 	cin.get(seizoen);
 
-	BC->addArtikel(new Band(naam, fabrikant, prijs, diameter, breedte, hoogte, snelheidsIndex, seizoen));
+	BC->addArtikel(new Band(naam, fabrikant, prijs, diameter, breedte, hoogte, snelheidsIndex, seizoen, stock));
 	return;
 }
 
@@ -45,7 +49,7 @@ void addVelg(Bandencentrale* BC)
 {
 	char naam[20], fabrikant[64], kleur[64], tempalum;
 	float prijs, diameter;
-	int breedte;
+	int breedte, stock;
 	bool aluminum = false;
 
 	system("cls");
@@ -66,6 +70,9 @@ void addVelg(Bandencentrale* BC)
 	cout << endl << "Geef de breedte(int) v/h product: ";
 	cin >> breedte;
 
+	cout << endl << "Geef de huidige stock(int) v/h product: ";
+	cin >> stock;
+
 	cin.get();
 
 	cout << endl << "Geef kleur[64] v/h product: ";
@@ -80,7 +87,7 @@ void addVelg(Bandencentrale* BC)
 	cin.get();
 
 
-	BC->addArtikel(new Velg(naam, fabrikant, prijs, diameter, breedte, kleur, aluminum));
+	BC->addArtikel(new Velg(naam, fabrikant, prijs, diameter, breedte, kleur, aluminum, stock));
 
 	return;
 }

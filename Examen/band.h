@@ -5,7 +5,7 @@ class Band :
 {
 public:
 	Band();
-	Band(char[], char[], float, float, float, float, float, char);
+	Band(char[], char[], float, float, float, float, float, char, int);
 	~Band();
 
 	// SETTERS

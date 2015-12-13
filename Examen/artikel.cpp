@@ -35,6 +35,12 @@ void Artikel::setDiameter(float diameter)
 	return;
 }
 
+void Artikel::setStock(int stock)
+{
+	this->stock = stock;
+	return;
+}
+
 
 //GETTERS
 char* Artikel::getNaam()
@@ -55,4 +61,9 @@ float Artikel::getPrijs()
 float Artikel::getDiameter()
 {
 	return this->diameter;
+}
+
+int Artikel::getStock()
+{
+	return this->stock;
 }

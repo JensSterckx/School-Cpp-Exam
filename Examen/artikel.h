@@ -12,6 +12,7 @@ public:
 	void setFabrikant(char[]);
 	void setPrijs(float);
 	void setDiameter(float);
+	void setStock(int);
 
 	//GETTERS
 	char* getNaam();
@@ -19,10 +20,12 @@ public:
 	float getPrijs();
 	float getDiameter();
 	virtual int getType() = 0;
+	int getStock();
 
 private:
 	char naam[20];
 	char fabrikant[64];
 	float prijs;
 	float diameter;
+	int stock;
 };

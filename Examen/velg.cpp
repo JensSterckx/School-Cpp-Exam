@@ -1,7 +1,7 @@
 #include "velg.h"
 
 Velg::Velg() {}
-Velg::Velg(char naam[], char fabrikant[], float prijs, float diameter, int breedte, char kleur[], bool aluminium)
+Velg::Velg(char naam[], char fabrikant[], float prijs, float diameter, int breedte, char kleur[], bool aluminium, int stock)
 {
 	std::cout << "#\tConstructed Velg()#\n";
 	this->setNaam(naam);
@@ -11,6 +11,7 @@ Velg::Velg(char naam[], char fabrikant[], float prijs, float diameter, int breed
 	this->setBreedte(breedte);
 	this->setKleur(kleur);
 	this->setAluminium(aluminium);
+	this->setStock(stock);
 }
 
 Velg::~Velg()
