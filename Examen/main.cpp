@@ -1,5 +1,6 @@
 #include "main.h"
 #include "add_hulp.h"
+#include <iomanip>
 
 using namespace std;
 
@@ -213,6 +214,178 @@ void adminKlantenMenu()
 
 void viewArtikelMenu()
 {
+	/*
+	Het programma moet de stock kunnen weergeven van alle banden en velgen die er verkocht worden. 
+	Ook indien ze niet voorradig zijn moeten deze weergegeven worden. 
+	De stock moet volledig kunnen weergegeven worden, 
+	maar er moet ook kunnen gefilterd worden op banden of velgen. 
+	Ook hadden ze graag kunnen filteren op maat
+	*/
+	int in;
+	Artikel** arts = BC->getArtikels();
+
+	do {
+		system("cls");
+		cout << "*********************************************" << endl;
+		cout << "*              ARTIKEL ZOEKEN             A *" << endl;
+		cout << "*                                           *" << endl;
+		cout << "* 1. Alle Artikels                          *" << endl;
+		cout << "* 2. Specifiek  (Met Art nummer)            *" << endl;
+		cout << "* 3. Zoeken  (Velgen of Banden)             *" << endl;
+		cout << "*                                           *" << endl;
+		cout << "* 0. Stop                                   *" << endl;
+		cout << "*********************************************" << endl;
+		cout << "Uw Keuze: ";
+
+		in = getNumericInput();
+		switch (in)
+		{
+		case 0:
+			break;
+
+		case 1:
+			//Alle artikels
+			system("cls");
+			cout << "*********************************************" << endl;
+			cout << "*             ARTIKELS OPSOMMEN           A *" << endl;
+			cout << "*                 ---------                 *" << endl;
+			cout << "ART NUMMER         ART NAAM    ART TYPE      " << endl << endl;
+
+			for (int i = 0; i < MAX_ARTIKELEN; i++)
+			{
+				if (arts[i] == nullptr)
+					continue;
+
+				cout << setw(3) << i << ":" << setw(23) << arts[i]->getNaam();
+				if (arts[i]->getType() == 0)
+				{
+					cout << setw(10) << "'BAND'";
+				}
+				else
+				{
+					cout << setw(10) << "'VELG'";
+				}
+
+				if (arts[i]->getStock() < 2)
+				{
+					cout << setw(15) << "!CHECK STOCK!";
+				}
+				cout << endl;
+			}
+
+			cout << endl << "Druk op enter om door te gaan" << endl;
+			cin.get();
+
+			break;
+
+		case 2:
+			//Specifiek artikelnummer
+			printArtikelM();
+			break;
+
+		case 3:
+			//Zoeken
+			printZoekArtM();
+			break;
+
+		default:
+			printVerkeerdeInput();
+			break;
+		}
+		BC->save();
+	} while (in != 0);
+	return;
+}
+
+void printZoekArtM()
+{
+	system("cls");
+	cout << "*********************************************" << endl;
+	cout << "*             ARTIKEL INFORMATIE          A *" << endl;
+	cout << "*                 ---------                 *" << endl;
+	cout << "Zoeken op:" << endl;
+	cout << "1. Banden" << endl;
+	cout << "2. Velgen" << endl;
+	cout << "Keuze: ";
+
+	int in = getNumericInput();
+	in -= 1;
+
+	Artikel** arts = BC->getArtikels();
+	int i = 0;
+	cout << endl << "ART NUMMER         ART NAAM          " << endl << endl;
+	while (i < MAX_ARTIKELEN)
+	{
+		if (arts[i] == nullptr)
+		{
+			i++;
+			continue;
+		}
+
+		if (arts[i]->getType() == in)
+		{
+			cout << setw(3) << i << ":" << setw(23) << arts[i]->getNaam();
+			if (arts[i]->getStock() < 2)
+			{
+				cout << setw(15) << "!CHECK STOCK!";
+			}
+			cout << endl;
+		}
+		i++;
+	}
+	cout << endl << "Druk op enter om door te gaan" << endl;
+	cin.get();
+}
+
+void printArtikelM()
+{
+	system("cls");
+	cout << "*********************************************" << endl;
+	cout << "*             ARTIKEL INFORMATIE          A *" << endl;
+	cout << "*                 ---------                 *" << endl;
+	cout << "Geef het artikel id: ";
+
+	int in = getNumericInput();
+	Artikel* art = BC->getArtikels()[in];
+	if (art == nullptr)
+	{
+		cout << endl << "Artikel niet gevonden!" << endl;
+		cin.get();
+		return;
+	}
+
+	cout << "#############################################" << endl;
+	cout << "ID: " << in << endl;
+	cout << "Naam: " << art->getNaam() << endl;
+	cout << "Fabrikant: " << art->getFabrikant() << endl;
+	cout << "Prijs: " << art->getPrijs() << endl;
+	cout << "Diameter: " << art->getDiameter() << endl;
+	cout << "Stock: " << art->getStock() << endl;
+	if (art->getType() == 0)
+	{
+		//BAND
+		cout << "TYPE: BAND" << endl;
+		Band* tempb = (Band*)art;
+
+		cout << "Breedte: " << tempb->getBreedte() << endl;
+		cout << "Hoogte: " << tempb->getHoogte() << endl;
+		cout << "Snelheids Index: " << tempb->getSnelheidsIndex() << endl;
+		cout << "Seizoen: " << tempb->getSeizoen() << endl;
+	}
+	else
+	{
+		//VELG
+		cout << "TYPE: VELG" << endl;
+		Velg* tempv = (Velg*)art;
+
+		cout << "Breedte: " << tempv->getBreedte() << endl;
+		cout << "Kleur: " << tempv->getKleur() << endl;
+		cout << "Is aluminium: " << tempv->getAluminium() << endl;
+	}
+
+	cout << "Druk op enter om verder te gaan...";
+	cin.get();
+
 	return;
 }
 

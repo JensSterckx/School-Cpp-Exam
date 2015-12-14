@@ -18,6 +18,8 @@ void viewArtikelMenu();
 void addArtikelMenu();
 void deleteArtikelMenu();
 void viewStockMenu();
+void printArtikelM();
+void printZoekArtM();
 
 void adminKlantenMenu();
 
