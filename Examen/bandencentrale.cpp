@@ -173,14 +173,14 @@ void Bandencentrale::load() //Loades klanten en artikels
 			Band b;
 			cout << "LOAD BAND";
 			binFile.read((char*)&b, sizeof(Band));
-			this->addArtikel(new Band(b.getNaam(), b.getFabrikant(), b.getPrijs(), b.getDiameter(), b.getBreedte(), b.getHoogte(), b.getSnelheidsIndex(), b.getSeizoen()));
+			this->addArtikel(new Band(b.getNaam(), b.getFabrikant(), b.getPrijs(), b.getDiameter(), b.getBreedte(), b.getHoogte(), b.getSnelheidsIndex(), b.getSeizoen(), b.getStock()));
 		}
 		else
 		{
 			Velg v;
 			cout << "LOAD VELG";
 			binFile.read((char*)&v, sizeof(Velg));
-			this->addArtikel(new Velg(v.getNaam(), v.getFabrikant(), v.getPrijs(), v.getDiameter(), v.getBreedte(), v.getKleur(), v.getAluminium()));
+			this->addArtikel(new Velg(v.getNaam(), v.getFabrikant(), v.getPrijs(), v.getDiameter(), v.getBreedte(), v.getKleur(), v.getAluminium(), v.getStock()));
 		}
 		i++;
 	}

@@ -13,13 +13,13 @@ Artikel::~Artikel()
 //SETTERS
 void Artikel::setNaam(char naam[])
 {
-	strcpy(this->naam, naam);
+	strcpy_s(this->naam, naam);
 	return;
 }
 
 void Artikel::setFabrikant(char fabrikant[])
 {
-	strcpy(this->fabrikant, fabrikant);
+	strcpy_s(this->fabrikant, fabrikant);
 	return;
 }
 

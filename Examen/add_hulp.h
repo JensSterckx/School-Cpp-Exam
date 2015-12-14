@@ -6,4 +6,3 @@ void addVelg(Bandencentrale*);
 
 void addKlant(Bandencentrale*);
 
-void saveArtikels(Bandencentrale*);
