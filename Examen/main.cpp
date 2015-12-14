@@ -312,15 +312,11 @@ void printZoekArtM()
 	in -= 1;
 
 	Artikel** arts = BC->getArtikels();
-	int i = 0;
 	cout << endl << "ART NUMMER         ART NAAM          " << endl << endl;
-	while (i < MAX_ARTIKELEN)
+	for (int i = 0; i < MAX_ARTIKELEN; i++)
 	{
 		if (arts[i] == nullptr)
-		{
-			i++;
 			continue;
-		}
 
 		if (arts[i]->getType() == in)
 		{
@@ -331,7 +327,6 @@ void printZoekArtM()
 			}
 			cout << endl;
 		}
-		i++;
 	}
 	cout << endl << "Druk op enter om door te gaan" << endl;
 	cin.get();
@@ -346,7 +341,7 @@ void printArtikelM()
 	cout << "Geef het artikel id: ";
 
 	int in = getNumericInput();
-	Artikel* art = BC->getArtikels()[in];
+	Artikel* art = BC->getArtikel(in);
 	if (art == nullptr)
 	{
 		cout << endl << "Artikel niet gevonden!" << endl;
@@ -354,7 +349,7 @@ void printArtikelM()
 		return;
 	}
 
-	cout << "#############################################" << endl;
+	cout << endl << "#############################################" << endl;
 	cout << "ID: " << in << endl;
 	cout << "Naam: " << art->getNaam() << endl;
 	cout << "Fabrikant: " << art->getFabrikant() << endl;
@@ -435,6 +430,110 @@ void deleteArtikelMenu()
 
 void viewStockMenu()
 {
+	int in;
+	Artikel** arts = BC->getArtikels();
+	do {
+		system("cls");
+		cout << "*********************************************" << endl;
+		cout << "*                   STOCK                 A *" << endl;
+		cout << "*                                           *" << endl;
+		cout << "* 1. Artikels met lage stock                *" << endl;
+		cout << "* 2. Artikelstock aanpassen                 *" << endl;
+		cout << "*                                           *" << endl;
+		cout << "* 0. Stop                                   *" << endl;
+		cout << "*********************************************" << endl;
+		cout << "Uw Keuze: ";
+
+		in = getNumericInput();
+		switch (in)
+		{
+		case 0:
+			break;
+
+		case 1:
+			cout << endl;
+			//Eerst de compleet lege showen
+			for (int i = 0; i < MAX_ARTIKELEN; i++)
+			{
+				if (arts[i] == nullptr)
+					continue;
+
+				if (arts[i]->getStock() == 0)
+				{
+					cout << setw(3) << i << ":" << setw(23) << arts[i]->getNaam() << setw(10);
+					if (arts[i]->getType() == 0)
+					{
+						cout  << "'BAND'";
+					}
+					else
+					{
+						cout  << "'VELG'";
+					}
+					cout << setw(16) << "0 STOCK OVER!!";
+					cout << endl;
+				}
+			}
+
+			//En dan de lage
+			for (int i = 0; i < MAX_ARTIKELEN; i++)
+			{
+				if (arts[i] == nullptr)
+					continue;
+
+				if (arts[i]->getStock() < 5 && arts[i]->getStock() != 0)
+				{
+					cout << setw(3) << i << ":" << setw(23) << arts[i]->getNaam() << setw(10);
+					if (arts[i]->getType() == 0)
+					{
+						cout << "'BAND'";
+					}
+					else
+					{
+						cout << "'VELG'";
+					}
+					cout << setw(3) << arts[i]->getStock() << " STOCK OVER";
+					cout << endl;
+				}
+			}
+			cout << "Druk op enter om verder te gaan...";
+			cin.get();
+
+			break;
+
+		case 2:
+			cout << endl << "Geef het artikel nummer om de stock aan te passen: ";
+			in = getNumericInput();
+			if (arts[in] == nullptr)
+			{
+				cout << "Ongekend artikel" << endl;
+			}
+			else
+			{
+				cout << "Huidige stock: " << arts[in]->getStock() << endl;
+				cout << "Nieuwe stock: ";
+				int ni = getNumericInput();
+				if (ni < 0)
+				{
+					cout << endl << ni << " is een ongeldige stock!";
+				}
+				else
+				{
+					arts[in]->setStock(ni);
+					cout << "Stock van '" << arts[in]->getNaam() << "' is gezet naar: " << ni;
+				}
+			}
+
+
+			cout << endl << "Druk op enter om verder te gaan...";
+			cin.get();
+			break;
+
+		default:
+			printVerkeerdeInput();
+			break;
+		}
+		BC->save();
+	} while (in != 0);
 	return;
 }
 
