@@ -40,6 +40,7 @@ class Bandencentrale
 
 		Klant** getKlanten();
 		Klant* getKlant(int);
+		void deleteKlant(int);
 
 		Artikel** getArtikels();
 		Artikel* getArtikel(int);

@@ -204,6 +204,7 @@ void adminKlantenMenu()
 			addKlant(BC);
 			break;
 		case 3:
+			deleteKlantMenu();
 			break;
 		default:
 			printVerkeerdeInput();
@@ -328,6 +329,44 @@ void printKlantM()
 	return;
 }
 
+void deleteKlantMenu()
+{
+	int in;
+
+	system("cls");
+	cout << "*********************************************" << endl;
+	cout << "*               KLANT DELETEN             A *" << endl;
+	cout << "*                                           *" << endl;
+	cout << "Geef het klantennummer: ";
+	in = getNumericInput();
+
+	Klant* art = BC->getKlant(in);
+	if (art == nullptr)
+	{
+		cout << in << " is geen geldig klantennummer!" << endl;
+	}
+	else
+	{
+		cout << "Bent u zeker dat u '" << art->getNaam() << "' wilt deleten?" << endl;
+		cout << "(y/n): ";
+		char temp;
+		cin >> temp;
+		cin.get();
+		if (temp == 'y')
+		{
+			char tempstorn[20];
+			strcpy_s(tempstorn, art->getNaam());
+			BC->deleteKlant(in);
+			art = nullptr;
+			cout << tempstorn << "is succesvol verwijderd" << endl;
+		}
+	}
+
+	cout << endl << "Druk op enter om terug te gaan...";
+	cin.get();
+	return;
+}
+
 void viewArtikelMenu()
 {
 	/*
@@ -365,7 +404,7 @@ void viewArtikelMenu()
 			cout << "*********************************************" << endl;
 			cout << "*             ARTIKELS OPSOMMEN           A *" << endl;
 			cout << "*                 ---------                 *" << endl;
-			cout << "ART NUMMER         ART NAAM    ART TYPE      " << endl << endl;
+			cout << "ART NUMMER         ART NAAM  ART TYPE  STOCK    " << endl << endl;
 
 			for (int i = 0; i < MAX_ARTIKELEN; i++)
 			{
@@ -381,7 +420,7 @@ void viewArtikelMenu()
 				{
 					cout << setw(10) << "'VELG'";
 				}
-
+				cout << setw(5) << arts[i]->getStock();
 				if (arts[i]->getStock() < 2)
 				{
 					cout << setw(15) << "!CHECK STOCK!";
@@ -701,8 +740,7 @@ void factuurMenu()
 			cout << "* 2. NIEUW factuur aanmaken                 *" << endl;
 		else
 			cout << "* 2. Huidig factuur beheren                 *" << endl;
-		cout << "* 3. Zoeken op klant                        *" << endl;
-		cout << "* 4. Opsommen (alle weergeven)              *" << endl;
+		cout << "* 3. Opsommen (alle weergeven)              *" << endl;
 		cout << "*                                           *" << endl;
 		cout << "* 0. Stop                                   *" << endl;
 		cout << "*********************************************" << endl;
@@ -720,14 +758,12 @@ void factuurMenu()
 			manageHuidigFactuur();
 			break;
 		case 3:
-			break;
-		case 4:
 			//Alle facturen
 			system("cls");
 			cout << "*********************************************" << endl;
 			cout << "*             FACTUREN OPSOMMEN           A *" << endl;
 			cout << "*                 ---------                 *" << endl;
-			cout << "FACT NUMMER   FACT #ARTS  FACT PRIJS   FACT DATUM" << endl << endl;
+			cout << "FACT NUMMER   FACT #ARTS   FACT PRIJS         FACT DATUM" << endl << endl;
 
 			for (int i = 0; i < MAX_FACTUREN; i++)
 			{
@@ -746,7 +782,7 @@ void factuurMenu()
 				}
 
 				cout << cnt << " artikels" << setw(10) << facts[i]->getTotaalPrijs();
-				cout << setw(25) << facts[i]->getDatum();
+				cout << setw(35) << facts[i]->getDatum();
 				cout << endl;
 			}
 
@@ -765,7 +801,6 @@ void factuurMenu()
 void bekijkFactuur()
 {
 	int in;
-
 	system("cls");
 	cout << "*********************************************" << endl;
 	cout << "*                 FACTUUR                 A *" << endl;
@@ -785,8 +820,10 @@ void bekijkFactuur()
 	cout << endl << "#############################################" << endl;
 	cout << "ID: " << in << endl;
 	cout << "Datum: " << fact->getDatum() << endl;
-	cout << "Klant: " << fact->getKlant()->getNaam() << endl << "ADR: " << fact->getKlant()->getAdres() << endl;
+	cout << "Klant: " << fact->getKlant()->getNaam() << endl;
+	cout << "ADR: " << fact->getKlant()->getAdres() << endl;
 	cout << "Totaalprijs: " << fact->getTotaalPrijs() << endl;
+	cout << "Verkregen korting: " << fact->getKorting() << endl;
 
 	cout << "Artikels:" << endl;
 	Artikel** arts = fact->getArtikels();
@@ -805,7 +842,7 @@ void bekijkFactuur()
 			cout << setw(10) << "'VELG'";
 		}
 
-		cout << setw(5) << arts[i]->getPrijs();
+		cout << setw(5) << arts[i]->getPrijs() << " eur";
 		cout << endl;
 	}
 
@@ -851,8 +888,10 @@ void manageHuidigFactuur()
 		cout << "KLANT: " << huidig->getKlant()->getNaam() << endl <<endl;
 		cout << "*********************************************" << endl;
 		cout << "Artikels:" << endl;
+
 		Artikel** arts = huidig->getArtikels();
 		float totaal = 0;
+
 		for (int i = 0; i < MAX_ARTIKELEN_PER_FACTUUR; i++)
 		{
 			if (arts[i] == nullptr)
@@ -868,11 +907,14 @@ void manageHuidigFactuur()
 				cout << setw(10) << "'VELG'";
 			}
 
-			cout << setw(4) << arts[i]->getPrijs() << " €";
+			cout << setw(6) << arts[i]->getPrijs() << " eur";
 			cout << endl;
 			totaal += arts[i]->getPrijs();
 		}
-		cout << "TOTAAL (zonder korting): " << totaal;
+		huidig->sluiten(); //Berekend alles
+		cout << "TOTAAL (zonder korting): " << totaal << endl;
+		cout << "KORTING (alles erop en eraan): " << huidig->getKorting() << endl;
+		cout << "TOTAAL (met korting): " << huidig->getTotaalPrijs() << endl;
 		cout << endl;
 		cout << "*********************************************" << endl;
 		cout << "* 1. Artikel toevoegen                      *" << endl;
@@ -880,7 +922,7 @@ void manageHuidigFactuur()
 		cout << "* 3. Factuur sluiten                        *" << endl;
 		cout << "* 4. Factuur annuleren (Discard)            *" << endl;
 		cout << "*                                           *" << endl;
-		cout << "* 0. Terug                                   *" << endl;
+		cout << "* 0. Terug                                  *" << endl;
 		cout << "*********************************************" << endl;
 		cout << "Uw Keuze: ";
 
@@ -901,13 +943,39 @@ void manageHuidigFactuur()
 			}
 			else
 			{
-				huidig->addArtikel(art);
-				cout << endl << "Artikel '" << art->getNaam() << "' is toegevoegd";
+				if (art->getStock() == 0)
+				{
+					cout << endl << "Artikel '" << art->getNaam() << "' is uit stock!!!!";
+				}
+				else
+				{
+					huidig->addArtikel(art);
+					art->decrementStock();
+					cout << endl << "Artikel '" << art->getNaam() << "' is toegevoegd";
+				}
+
 				cout << endl << "Druk op enter om verder te gaan.";
 				cin.get();
 			}
 			break;
 		case 2:
+			cout << endl << "Geef het artikelnumer dat u wilt VERWIJDEREN (index zoals hierboven): " << endl;
+			artid = getNumericInput();
+			if (arts[artid] == nullptr)
+			{
+				cout << endl << "Artikel niet in mandje!" << endl;
+				cout << endl << "Druk op enter om verder te gaan.";
+				cin.get();
+			}
+			else
+			{
+				arts[artid]->incrementStock();
+				huidig->delArtikel(artid);
+				cout << endl << "Artikel is verwijderd" << endl;
+				
+				cout << endl << "Druk op enter om verder te gaan.";
+				cin.get();
+			}
 			break;
 		case 3:
 			cout << endl << "Bent u zeker dat de factuur gesloten mag worden? (y/n): ";
@@ -924,6 +992,15 @@ void manageHuidigFactuur()
 			cout << endl << "Bent u zeker dat de factuur weg mag? (y/n): ";
 			cin >> keuze;
 			cin.get();
+
+			//Stocks terug goed zetten
+			for (int o = 0; o < MAX_ARTIKELEN_PER_FACTUUR; o++)
+			{
+				if (arts[o] == nullptr)
+					continue;
+
+				arts[o]->incrementStock();
+			}
 
 			if (keuze == 'y')
 			{

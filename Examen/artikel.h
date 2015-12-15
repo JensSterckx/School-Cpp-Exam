@@ -22,6 +22,9 @@ public:
 	virtual int getType() = 0;
 	int getStock();
 
+	void decrementStock();
+	void incrementStock();
+
 private:
 	char naam[20];
 	char fabrikant[64];

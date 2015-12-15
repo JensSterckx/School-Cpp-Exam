@@ -67,6 +67,12 @@ char* Factuur::getDatum()
 	return datum;
 }
 
+void Factuur::setDatum(char dat[])
+{
+	strcpy_s(this->datum, dat);
+	return;
+}
+
 void Factuur::addArtikel(Artikel* art)
 {
 	int i = 0;
@@ -78,16 +84,60 @@ void Factuur::addArtikel(Artikel* art)
 	artikels[i] = art;
 	return;
 }
+void Factuur::delArtikel(int id)
+{
+	this->artikels[id] = nullptr;
+	return;
+}
 void Factuur::sluiten()
 {
 	totaalPrijs = 0;
 	korting = 0;
+	int itemcount = 0;
+	float tempprijs = 0;
 	for (int i = 0; i < MAX_ARTIKELEN_PER_FACTUUR; i++)
 	{
 		if (artikels[i] == nullptr)
 			continue;
 
 		totaalPrijs += artikels[i]->getPrijs();
+		itemcount++;
+	}
+
+	/* KORTING */
+	if (itemcount >= 2)
+	{
+		tempprijs = totaalPrijs;
+		totaalPrijs *= klant->getSetKorting();
+		totaalPrijs /= 100;
+		korting += totaalPrijs;
+		totaalPrijs = tempprijs - totaalPrijs;
+	}
+	if (itemcount >= 4)
+	{
+		tempprijs = totaalPrijs;
+		totaalPrijs *= klant->getSetKorting2();
+		totaalPrijs /= 100;
+		korting += totaalPrijs;
+		totaalPrijs = tempprijs - totaalPrijs;
+	}
+	if (klant->isBedrijf())
+	{
+		BedrijfsKlant* temp = (BedrijfsKlant*)klant;
+		tempprijs = totaalPrijs;
+		totaalPrijs *= temp->getBedrijfsKorting();
+		totaalPrijs /= 100;
+		korting += totaalPrijs;
+		totaalPrijs = tempprijs - totaalPrijs;
+
+		if (itemcount == 10)
+		{
+			tempprijs = totaalPrijs;
+			totaalPrijs *= temp->getVolumeKorting();
+			totaalPrijs /= 100;
+			korting += totaalPrijs;
+			totaalPrijs = tempprijs - totaalPrijs;
+		}
 	}
 }
 

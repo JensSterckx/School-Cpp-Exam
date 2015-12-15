@@ -284,9 +284,10 @@ void Bandencentrale::load() //Loades klanten en artikels
 		*/
 		Factuur tfact;
 		binFile.read((char*)&tfact, sizeof(Factuur));
-		tfact.fixNietLegeArtikels();
+		tfact.fixNietLegeArtikels(); //Bug ofzo? De constructor maakt de eerste 2 artikels niet leeg
 
 		Factuur* finalfact = new Factuur(tfact.getKlant());
+		finalfact->setDatum(tfact.getDatum());
 
 		bool bedrijf;
 		binFile.read((char*)&bedrijf, sizeof(bool));
@@ -406,6 +407,14 @@ void Bandencentrale::deleteArtikel(int id)
 	return;
 }
 
+
+void Bandencentrale::deleteKlant(int id)
+{
+	delete this->klanten[id];
+	this->klanten[id] = nullptr;
+	return;
+}
+
 char* Bandencentrale::getNaam()
 {
 	return this->naam;
@@ -445,6 +454,7 @@ void Bandencentrale::sluitHuidigFactuur(bool opslaan)
 	{
 		open_factuur->sluiten(); //Prijzen berekenen
 		this->addFactuur(open_factuur); //huidige factuur pointer bij facturen voegen
+		
 		//open_factuur terug naar null laten verwijzen.
 		//NIET DELETE DOEN, want dan is de warde in facturen ook leeg
 	}

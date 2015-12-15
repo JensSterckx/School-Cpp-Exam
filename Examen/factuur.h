@@ -1,6 +1,6 @@
 #pragma once
 
-#include "klant.h"
+#include "bedrijfsklant.h"
 #include "band.h"
 #include "velg.h"
 #include <ctime>
@@ -18,12 +18,16 @@ public:
 	void setKorting(float);
 	void addArtikel(Artikel*);
 
+	void delArtikel(int);
+
 	Klant* getKlant();
 	float getKorting();
 
 	Artikel** getArtikels();
 
 	char* getDatum();
+
+	void setDatum(char[]);
 
 	float getTotaalPrijs();
 

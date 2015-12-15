@@ -67,3 +67,14 @@ int Artikel::getStock()
 {
 	return this->stock;
 }
+
+void Artikel::decrementStock()
+{
+	this->stock -= 1;
+	return;
+}
+void Artikel::incrementStock()
+{
+	this->stock += 1;
+	return;
+}

@@ -20,6 +20,7 @@ void deleteArtikelMenu();
 void viewStockMenu();
 void printArtikelM();
 void printZoekArtM();
+void deleteKlantMenu();
 
 void adminKlantenMenu();
 void viewKlant();
