@@ -5,7 +5,7 @@
 using namespace std;
 
 /*
-	GLOBALE BANDENCENTRALE VARIABELE
+	GLOBALE BANDENCENTRALE VARIABELE (EN OOK DE ENIGSTE)
 	reden: Anders moet ik deze met elke functie oproep van een menu mee geven.
 */
 Bandencentrale* BC;
@@ -43,6 +43,7 @@ int main()
 			break;
 		case 2:
 			userMenu();
+			break;
 		default:
 			printVerkeerdeInput();
 			break;
@@ -83,12 +84,6 @@ void printVerkeerdeInput()
 	return;
 }
 
-
-/*
-	ACTIONS
-*/
-
-
 /*
 	MENU PRINTS
 */
@@ -99,9 +94,14 @@ void adminMenu()
 
 	do {
 		//Scherm clearen
+		Factuur* huidig = BC->getHuidigFactuur();
 		system("cls");
 		cout << "*********************************************" << endl;
-		cout << "*                   ADMIN                   *" << endl;
+		if (huidig == nullptr)
+			cout << "*                  ADMIN                    *" << endl;
+		else
+			cout << "*  !FACT OPEN!     ADMIN     !FACT OPEN!    *" << endl;
+
 		cout << "*                                           *" << endl;
 		cout << "* 1. Artikels                               *" << endl;
 		cout << "* 2. Klanten                                *" << endl;
@@ -508,7 +508,7 @@ void printArtikelM()
 	cout << "ID: " << in << endl;
 	cout << "Naam: " << art->getNaam() << endl;
 	cout << "Fabrikant: " << art->getFabrikant() << endl;
-	cout << "Prijs: " << art->getPrijs() << endl;
+	cout << "Prijs: " << fixed << setprecision(2) << art->getPrijs() << endl;
 	cout << "Diameter: " << art->getDiameter() << endl;
 	cout << "Stock: " << art->getStock() << endl;
 	if (art->getType() == 0)
@@ -730,17 +730,24 @@ void factuurMenu()
 	Factuur** facts = BC->getFacturen();
 
 	do {
+		Factuur* huidig = BC->getHuidigFactuur();
 		system("cls");
 		cout << "*********************************************" << endl;
-		cout << "*                 FACTUREN                A *" << endl;
+		if (huidig == nullptr)
+			cout << "*                 FACTUREN                  *" << endl;
+		else
+			cout << "*  !FACT OPEN!    FACTUREN   !FACT OPEN!    *" << endl;
+
 		cout << "*                                           *" << endl;
 		cout << "* 1. Bekijken                               *" << endl;
-		Factuur* huidig = BC->getHuidigFactuur();
+
 		if(huidig == nullptr)
 			cout << "* 2. NIEUW factuur aanmaken                 *" << endl;
 		else
 			cout << "* 2. Huidig factuur beheren                 *" << endl;
+
 		cout << "* 3. Opsommen (alle weergeven)              *" << endl;
+		cout << "* 4. Zoeken op klant naam (naam vgl)        *" << endl;
 		cout << "*                                           *" << endl;
 		cout << "* 0. Stop                                   *" << endl;
 		cout << "*********************************************" << endl;
@@ -758,36 +765,10 @@ void factuurMenu()
 			manageHuidigFactuur();
 			break;
 		case 3:
-			//Alle facturen
-			system("cls");
-			cout << "*********************************************" << endl;
-			cout << "*             FACTUREN OPSOMMEN           A *" << endl;
-			cout << "*                 ---------                 *" << endl;
-			cout << "FACT NUMMER   FACT #ARTS   FACT PRIJS         FACT DATUM" << endl << endl;
-
-			for (int i = 0; i < MAX_FACTUREN; i++)
-			{
-				if (facts[i] == nullptr)
-					continue;
-
-				Artikel** artikels = facts[i]->getArtikels();
-
-				cout << setw(3) << i << ":" << setw(10);
-				int cnt = 0;
-				for (int i = 0; i < MAX_ARTIKELEN_PER_FACTUUR; i++)
-				{
-					if (artikels[cnt] == nullptr)
-						continue;
-					cnt++;
-				}
-
-				cout << cnt << " artikels" << setw(10) << facts[i]->getTotaalPrijs();
-				cout << setw(35) << facts[i]->getDatum();
-				cout << endl;
-			}
-
-			cout << endl << "Druk op enter om door te gaan" << endl;
-			cin.get();
+			printFacturen();
+			break;
+		case 4:
+			zoekFactuurOpNaam();
 			break;
 		default:
 			printVerkeerdeInput();
@@ -822,7 +803,7 @@ void bekijkFactuur()
 	cout << "Datum: " << fact->getDatum() << endl;
 	cout << "Klant: " << fact->getKlant()->getNaam() << endl;
 	cout << "ADR: " << fact->getKlant()->getAdres() << endl;
-	cout << "Totaalprijs: " << fact->getTotaalPrijs() << endl;
+	cout << "Totaalprijs: " << fixed << setprecision(2) << fact->getTotaalPrijs() << endl;
 	cout << "Verkregen korting: " << fact->getKorting() << endl;
 
 	cout << "Artikels:" << endl;
@@ -842,7 +823,7 @@ void bekijkFactuur()
 			cout << setw(10) << "'VELG'";
 		}
 
-		cout << setw(5) << arts[i]->getPrijs() << " eur";
+		cout << setw(8) << fixed << setprecision(2) << arts[i]->getPrijs() << " eur";
 		cout << endl;
 	}
 
@@ -912,12 +893,24 @@ void manageHuidigFactuur()
 			totaal += arts[i]->getPrijs();
 		}
 		huidig->sluiten(); //Berekend alles
-		cout << "TOTAAL (zonder korting): " << totaal << endl;
-		cout << "KORTING (alles erop en eraan): " << huidig->getKorting() << endl;
-		cout << "TOTAAL (met korting): " << huidig->getTotaalPrijs() << endl;
+		cout << "TOTAAL (zonder korting): " << fixed << setprecision(2) << totaal << endl;
+		cout << "KORTING (alles erop en eraan): " << fixed << setprecision(2) << huidig->getKorting() << endl;
+		cout << "TOTAAL (met korting): " << fixed << setprecision(2) << huidig->getTotaalPrijs() << endl;
 		cout << endl;
 		cout << "*********************************************" << endl;
-		cout << "* 1. Artikel toevoegen                      *" << endl;
+
+		int tcnt = 0;
+		for (int i = 0; i < MAX_ARTIKELEN_PER_FACTUUR; i++)
+		{
+			if (arts[i] == nullptr)
+				continue;
+			tcnt++;
+		}
+		if(tcnt >= MAX_ARTIKELEN_PER_FACTUUR) //Niet meer toe laten dan onze array
+			cout << "* x. Artikel toevoegen (Factuur vol)        *" << endl;
+		else
+			cout << "* 1. Artikel toevoegen                      *" << endl;
+
 		cout << "* 2. Artikel verwijderen                    *" << endl;
 		cout << "* 3. Factuur sluiten                        *" << endl;
 		cout << "* 4. Factuur annuleren (Discard)            *" << endl;
@@ -932,6 +925,9 @@ void manageHuidigFactuur()
 		case 0:// Quit
 			break;
 		case 1:
+			if (tcnt >= MAX_ARTIKELEN_PER_FACTUUR)
+				break;
+
 			cout << endl << "Geef het artikelnumer dat u wilt toevoegen: " << endl;
 			artid = getNumericInput();
 			art = BC->getArtikel(artid);
@@ -1016,16 +1012,156 @@ void manageHuidigFactuur()
 	return;
 }
 
+void printFacturen()
+{
+	Factuur** facts = BC->getFacturen();
+
+	//Alle facturen
+	system("cls");
+	cout << "*********************************************" << endl;
+	cout << "*             FACTUREN OPSOMMEN           A *" << endl;
+	cout << "*                 ---------                 *" << endl;
+	cout << "FACT NUMMER   FACT #ARTS   FACT PRIJS         FACT DATUM" << endl << endl;
+
+	for (int i = 0; i < MAX_FACTUREN; i++)
+	{
+		if (facts[i] == nullptr)
+			continue;
+
+		Artikel** artikels = facts[i]->getArtikels();
+
+		cout << setw(3) << i << ":" << setw(10);
+		int cnt = 0;
+		for (int j = 0; j < MAX_ARTIKELEN_PER_FACTUUR; j++)
+		{
+			if (artikels[j] == nullptr)
+				continue;
+			cnt++;
+		}
+
+		cout << cnt << " artikels" << setw(10) << fixed << setprecision(2) << facts[i]->getTotaalPrijs();
+		cout << setw(30) << facts[i]->getDatum();
+		cout << endl;
+	}
+
+	cout << endl << "Druk op enter om door te gaan" << endl;
+	cin.get();
+}
+
+void zoekFactuurOpNaam()
+{
+	Factuur** facts = BC->getFacturen();
+	char tempnaam[20];
+
+	//Alle facturen
+	system("cls");
+	cout << "*********************************************" << endl;
+	cout << "*         FACTUREN OPSOMMEN OP NAAM       A *" << endl;
+	cout << "*                 ---------                 *" << endl;
+	cout << "* Geef de naam van de klant[20]: ";
+
+	cin.getline(tempnaam, 20);
+
+	cout << "FACT NUMMER   FACT NAAM   FACT #ARTS   FACT PRIJS         FACT DATUM" << endl << endl;
+
+	for (int i = 0; i < MAX_FACTUREN; i++)
+	{
+		if (facts[i] == nullptr)
+			continue;
+
+		if (!strstr(facts[i]->getKlant()->getNaam(), tempnaam))
+			continue;
+		
+		Artikel** artikels = facts[i]->getArtikels();
+		cout << i << ": " << setw(20) << facts[i]->getKlant()->getNaam() << setw(8);
+		int cnt = 0;
+		for (int j = 0; j < MAX_ARTIKELEN_PER_FACTUUR; j++)
+		{
+			if (artikels[j] == nullptr)
+				continue;
+			cnt++;
+		}
+
+		cout << cnt << " artikels" << setw(10) << fixed << setprecision(2) << facts[i]->getTotaalPrijs();
+		cout << setw(30) << facts[i]->getDatum();
+		cout << endl;
+	}
+
+	cout << endl << "Druk op enter om door te gaan" << endl;
+	cin.get();
+}
+
 //USERS
 void userMenu()
 {
-	//Scherm clearen
-	system("cls");
-	cout << "*********************************************" << endl;
-	cout << "*                   USER                    *" << endl;
-	cout << "*                                           *" << endl;
-	cout << "* 0. Stop                                   *" << endl;
-	cout << "*********************************************" << endl;
-	cout << "Uw Keuze: ";
-	getNumericInput();
+	int in;
+
+	do
+	{
+		Factuur* huidig = BC->getHuidigFactuur();
+		//Scherm clearen
+		system("cls");
+		cout << "*********************************************" << endl;
+
+		if (huidig == nullptr)
+			cout << "*                   USER                    *" << endl;
+		else
+			cout << "*  !FACT OPEN!      USER     !FACT OPEN!    *" << endl;
+
+		cout << "*                                           *" << endl;
+		cout << "* 1. Artikel Bekijken                       *" << endl;
+		cout << "* 2. Artikel Stock                          *" << endl;
+		cout << "*                                           *" << endl;
+		cout << "* 3. Klanten Bekijken                       *" << endl;
+		cout << "* 4. Klanten Toevoegen                      *" << endl;
+		cout << "*                                           *" << endl;
+		cout << "* 5. Factuur Bekijken                       *" << endl;
+
+		if (huidig == nullptr)
+			cout << "* 6. NIEUW factuur aanmaken                 *" << endl;
+		else
+			cout << "* 6. Huidig factuur beheren!!!!!!!!         *" << endl;
+
+		cout << "* 7. Facturen Opsommen (alle weergeven)     *" << endl;
+		cout << "* 8. Facturen Zoeken op klant naam          *" << endl;
+		cout << "*                                           *" << endl;
+		cout << "* 0. Stop                                   *" << endl;
+		cout << "*********************************************" << endl;
+		cout << "Uw Keuze: ";
+		in = getNumericInput();
+		switch (in)
+		{
+		case 0:// Quit
+			break;
+		case 1:
+			viewArtikelMenu();
+			break;
+		case 2:
+			viewStockMenu();
+			break;
+		case 3:
+			viewKlant();
+			break;
+		case 4:
+			addKlant(BC);
+			break;
+		case 5:
+			bekijkFactuur();
+			break;
+		case 6:
+			manageHuidigFactuur();
+			break;
+		case 7:
+			printFacturen();
+			break;
+		case 8:
+			zoekFactuurOpNaam();
+			break;
+		default:
+			printVerkeerdeInput();
+			break;
+		}
+	} while (in != 0);
+	BC->save();
+	return;
 }

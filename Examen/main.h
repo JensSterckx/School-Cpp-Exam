@@ -29,5 +29,7 @@ void printKlantM();
 void factuurMenu();
 void bekijkFactuur();
 void manageHuidigFactuur();
+void printFacturen();
+void zoekFactuurOpNaam();
 
 void userMenu();
