@@ -61,7 +61,7 @@ void Bandencentrale::save() //Saves klanten en artikels
 	/*
 		ARTIKELS SAVEN
 	*/
-	cout << "FILE OPENEn";
+	//cout << "FILE OPENEn";
 	//FILE OPENENEN
 	ofstream binFile;
 	binFile.open("save/artikels.bin", ios::binary);
@@ -75,17 +75,17 @@ void Bandencentrale::save() //Saves klanten en artikels
 			continue;
 		}
 		int type = artikels[i]->getType();
-		cout << "WRITE TYPE  " << type;
+		//cout << "WRITE TYPE  " << type;
 		binFile.write((char*)&type, sizeof(type));
 
 		if (type == 0)
 		{
-			cout << "WRITE BAND";
+			//cout << "WRITE BAND";
 			binFile.write((char*)artikels[i], sizeof(Band));
 		}
 		else
 		{
-			cout << "WRITE VELG";
+			//cout << "WRITE VELG";
 			binFile.write((char*)artikels[i], sizeof(Velg));
 		}
 
@@ -96,7 +96,7 @@ void Bandencentrale::save() //Saves klanten en artikels
 	/*
 		KLANTEN SAVEN
 	*/
-	cout << "FILE OPENEn";
+	//cout << "FILE OPENEn";
 	//FILE OPENENEN
 	binFile.open("save/klanten.bin", ios::binary);
 	i = 0;
@@ -110,17 +110,17 @@ void Bandencentrale::save() //Saves klanten en artikels
 			continue;
 		}
 		bool bedrijf = klanten[i]->isBedrijf();
-		cout << "WRITE BEDRIJF OF NIET  " << bedrijf;
+		//cout << "WRITE BEDRIJF OF NIET  " << bedrijf;
 		binFile.write((char*)&bedrijf, sizeof(bool));
 
 		if (bedrijf)
 		{
-			cout << "WRITE BEDRIJF";
+			//cout << "WRITE BEDRIJF";
 			binFile.write((char*)klanten[i], sizeof(BedrijfsKlant));
 		}
 		else
 		{
-			cout << "WRITE KLANT";
+			//cout << "WRITE KLANT";
 			binFile.write((char*)klanten[i], sizeof(Klant));
 		}
 
@@ -146,28 +146,28 @@ void Bandencentrale::save() //Saves klanten en artikels
 		}
 
 		//FACTUUR
-		cout << "WRITE FACTUUR";
+		//cout << "WRITE FACTUUR";
 		binFile.write((char*)facturen[i], sizeof(Factuur));
 
 		//KLANT
 		bool bedrijf = facturen[i]->getKlant()->isBedrijf();
-		cout << "WRITE FACT BEDRIJF OF NIET  " << bedrijf;
+		//cout << "WRITE FACT BEDRIJF OF NIET  " << bedrijf;
 		binFile.write((char*)&bedrijf, sizeof(bool));
 		if (bedrijf)
 		{
-			cout << "WRITE FACT BEDRIJF";
+			//cout << "WRITE FACT BEDRIJF";
 			BedrijfsKlant* tmp = (BedrijfsKlant*)facturen[i]->getKlant();
 			binFile.write((char*)tmp, sizeof(BedrijfsKlant));
 		}
 		else
 		{
-			cout << "WRITE FACT KLANT";
+			//cout << "WRITE FACT KLANT";
 			Klant* tmp = (Klant*)facturen[i]->getKlant();
 			binFile.write((char*)tmp, sizeof(Klant));
 		}
 
 		//ARTIKELS
-		cout << "WRITE ARTIKELS OF FACTUUR";
+		//cout << "WRITE ARTIKELS OF FACTUUR";
 		int j = 0;
 		Artikel** arts = facturen[i]->getArtikels();
 		while (j < MAX_ARTIKELEN_PER_FACTUUR) //Al onze artikels doorlopen
@@ -181,16 +181,16 @@ void Bandencentrale::save() //Saves klanten en artikels
 			{
 				type = arts[j]->getType();
 			}
-			cout << "WRITE TYPE  " << type;
+			//cout << "WRITE TYPE  " << type;
 			binFile.write((char*)&type, sizeof(int));
 			if (type == 0)
 			{
-				cout << "WRITE FACT BAND";
+				//cout << "WRITE FACT BAND";
 				binFile.write((char*)arts[j], sizeof(Band));
 			}
 			else if(type == 1)
 			{
-				cout << "WRITE FACT VELG";
+				//cout << "WRITE FACT VELG";
 				binFile.write((char*)arts[j], sizeof(Velg));
 			}
 			j++;
@@ -206,7 +206,7 @@ void Bandencentrale::load() //Loades klanten en artikels
 	/*
 		ARTIKELS
 	*/
-	cout << "FILE OPENEn";
+	//cout << "FILE OPENEn";
 	//FILE OPENENEN
 	ifstream binFile;
 	binFile.open("save/artikels.bin", ios::binary);
@@ -219,14 +219,14 @@ void Bandencentrale::load() //Loades klanten en artikels
 		if (type == 0)
 		{
 			Band b;
-			cout << "LOAD BAND";
+			//cout << "LOAD BAND";
 			binFile.read((char*)&b, sizeof(Band));
 			this->addArtikel(new Band(b.getNaam(), b.getFabrikant(), b.getPrijs(), b.getDiameter(), b.getBreedte(), b.getHoogte(), b.getSnelheidsIndex(), b.getSeizoen(), b.getStock()));
 		}
 		else
 		{
 			Velg v;
-			cout << "LOAD VELG";
+			//cout << "LOAD VELG";
 			binFile.read((char*)&v, sizeof(Velg));
 			this->addArtikel(new Velg(v.getNaam(), v.getFabrikant(), v.getPrijs(), v.getDiameter(), v.getBreedte(), v.getKleur(), v.getAluminium(), v.getStock()));
 		}
@@ -247,14 +247,14 @@ void Bandencentrale::load() //Loades klanten en artikels
 		if (bedrijf)
 		{	
 			BedrijfsKlant b;
-			cout << "LOAD BEDRIJF";
+			//cout << "LOAD BEDRIJF";
 			binFile.read((char*)&b, sizeof(BedrijfsKlant));
 			this->addKlant(new BedrijfsKlant(b.getNaam(), b.getAdres(), b.getSetKorting(), b.getSetKorting2(), b.getBtwNummer(), b.getVolumeKorting(), b.getBedrijfsKorting()));
 		}
 		else
 		{
 			Klant k;
-			cout << "LOAD KLANT";
+			//cout << "LOAD KLANT";
 			binFile.read((char*)&k, sizeof(Klant));
 			this->addKlant(new Klant(k.getNaam(), k.getAdres(), k.getSetKorting(), k.getSetKorting2()));
 		}
@@ -295,14 +295,14 @@ void Bandencentrale::load() //Loades klanten en artikels
 		if (bedrijf)
 		{
 			BedrijfsKlant b;
-			cout << "LOAD BEDRIJF";
+			//cout << "LOAD BEDRIJF";
 			binFile.read((char*)&b, sizeof(BedrijfsKlant));
 			finalfact->setKlant(new BedrijfsKlant(b.getNaam(), b.getAdres(), b.getSetKorting(), b.getSetKorting2(), b.getBtwNummer(), b.getVolumeKorting(), b.getBedrijfsKorting()));
 		}
 		else
 		{
 			Klant k;
-			cout << "LOAD KLANT";
+			//cout << "LOAD KLANT";
 			binFile.read((char*)&k, sizeof(Klant));
 			finalfact->setKlant(new Klant(k.getNaam(), k.getAdres(), k.getSetKorting(), k.getSetKorting2()));
 		}
@@ -313,14 +313,14 @@ void Bandencentrale::load() //Loades klanten en artikels
 			if (type == 0)
 			{
 				Band b;
-				cout << "LOAD FACT BAND";
+				//cout << "LOAD FACT BAND";
 				binFile.read((char*)&b, sizeof(Band));
 				finalfact->addArtikel(new Band(b.getNaam(), b.getFabrikant(), b.getPrijs(), b.getDiameter(), b.getBreedte(), b.getHoogte(), b.getSnelheidsIndex(), b.getSeizoen(), -1));
 			}
 			else if(type == 1)
 			{
 				Velg v;
-				cout << "LOAD FACT VELG";
+				//cout << "LOAD FACT VELG";
 				binFile.read((char*)&v, sizeof(Velg));
 				finalfact->addArtikel(new Velg(v.getNaam(), v.getFabrikant(), v.getPrijs(), v.getDiameter(), v.getBreedte(), v.getKleur(), v.getAluminium(), -1));
 			}

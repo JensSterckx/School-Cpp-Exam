@@ -1021,7 +1021,7 @@ void printFacturen()
 	cout << "*********************************************" << endl;
 	cout << "*             FACTUREN OPSOMMEN           A *" << endl;
 	cout << "*                 ---------                 *" << endl;
-	cout << "FACT NUMMER   FACT #ARTS   FACT PRIJS         FACT DATUM" << endl << endl;
+	cout << "FACT NUMMER   FACT NAAM   FACT #ARTS   FACT PRIJS         FACT DATUM" << endl << endl;
 
 	for (int i = 0; i < MAX_FACTUREN; i++)
 	{
@@ -1029,8 +1029,7 @@ void printFacturen()
 			continue;
 
 		Artikel** artikels = facts[i]->getArtikels();
-
-		cout << setw(3) << i << ":" << setw(10);
+		cout << i << ": " << setw(20) << facts[i]->getKlant()->getNaam() << setw(8);
 		int cnt = 0;
 		for (int j = 0; j < MAX_ARTIKELEN_PER_FACTUUR; j++)
 		{
