@@ -30,6 +30,9 @@ class Bandencentrale
 
 		void addKlant(Klant*);
 		void addArtikel(Artikel*);
+		void addFactuur(Factuur*);
+
+		Factuur* openFactuur(Klant*);
 
 		//GETTERS
 		char* getNaam();
@@ -40,6 +43,12 @@ class Bandencentrale
 
 		Artikel** getArtikels();
 		Artikel* getArtikel(int);
+		void deleteArtikel(int);
+
+		Factuur** getFacturen();
+		Factuur* getFactuur(int);
+		Factuur* getHuidigFactuur();
+		void sluitHuidigFactuur(bool);
 
 	private:
 		char naam[20];
@@ -47,4 +56,5 @@ class Bandencentrale
 		Klant* klanten[MAX_KLANTEN];
 		Artikel* artikels[MAX_ARTIKELEN];
 		Factuur* facturen[MAX_FACTUREN];
+		Factuur* open_factuur;
 };

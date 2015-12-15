@@ -124,13 +124,14 @@ void adminMenu()
 			break;
 		case 3:
 			factuurMenu();
+			break;
 		default:
 			printVerkeerdeInput();
 			break;
 		}
 	} while (in != 0);
-
 }
+
 void adminArtikelMenu()
 {
 	int in;
@@ -197,6 +198,7 @@ void adminKlantenMenu()
 		case 0:// Quit
 			break;
 		case 1:
+			viewKlant();
 			break;
 		case 2:
 			addKlant(BC);
@@ -209,6 +211,120 @@ void adminKlantenMenu()
 		}
 		BC->save();
 	} while (in != 0);
+	return;
+}
+
+void viewKlant()
+{
+	int in;
+	Klant** klants = BC->getKlanten();
+
+	do {
+		system("cls");
+		cout << "*********************************************" << endl;
+		cout << "*               KLANT ZOEKEN              A *" << endl;
+		cout << "*                                           *" << endl;
+		cout << "* 1. Alle Klanten                           *" << endl;
+		cout << "* 2. Specifiek  (Met Klant nummer)          *" << endl;
+		cout << "*                                           *" << endl;
+		cout << "* 0. Stop                                   *" << endl;
+		cout << "*********************************************" << endl;
+		cout << "Uw Keuze: ";
+
+		in = getNumericInput();
+		switch (in)
+		{
+		case 0:
+			break;
+
+		case 1:
+			//Alle artikels
+			system("cls");
+			cout << "*********************************************" << endl;
+			cout << "*             KLANTEN OPSOMMEN            A *" << endl;
+			cout << "*                 ---------                 *" << endl;
+			cout << "KLANT NUMMER      KLANT NAAM   KLANT TYPE    " << endl << endl;
+
+			for (int i = 0; i < MAX_KLANTEN; i++)
+			{
+				if (klants[i] == nullptr)
+					continue;
+
+				cout << setw(3) << i << ":" << setw(23) << klants[i]->getNaam();
+				if (klants[i]->isBedrijf())
+				{
+					cout << setw(12) << "'BEDRIJF'";
+				}
+				else
+				{
+					cout << setw(12) << "'PERSOON'";
+				}
+				cout << endl;
+			}
+
+			cout << endl << "Druk op enter om door te gaan" << endl;
+			cin.get();
+
+			break;
+
+		case 2:
+			//Specifiek artikelnummer
+			printKlantM();
+			break;
+
+		default:
+			printVerkeerdeInput();
+			break;
+		}
+		BC->save();
+	} while (in != 0);
+	return;
+}
+
+void printKlantM()
+{
+	system("cls");
+	cout << "*********************************************" << endl;
+	cout << "*              KLANT INFORMATIE           A *" << endl;
+	cout << "*                 ---------                 *" << endl;
+	cout << "Geef het klant id: ";
+
+	int in = getNumericInput();
+	Klant* klan = BC->getKlant(in);
+	if (klan == nullptr)
+	{
+		cout << endl << "Klant niet gevonden!" << endl;
+
+		cout << endl << "Druk op enter om verder te gaan...";
+		cin.get();
+		return;
+	}
+
+	cout << endl << "#############################################" << endl;
+	cout << "ID: " << in << endl;
+	cout << "Naam: " << klan->getNaam() << endl;
+	cout << "Adres: " << klan->getAdres() << endl;
+	cout << "Setkorting: " << klan->getSetKorting() << endl;
+	cout << "SetKorting2: " << klan->getSetKorting2() << endl;
+	if (klan->isBedrijf())
+	{
+		//Bedrijf
+		cout << "TYPE: BEDRIJF" << endl;
+		BedrijfsKlant* tempb = (BedrijfsKlant*)klan;
+
+		cout << "BTWNummer: " << tempb->getBtwNummer() << endl;
+		cout << "Volumekorting: " << tempb->getVolumeKorting() << endl;
+		cout << "BedrijfsKorting: " << tempb->getBedrijfsKorting() << endl;
+	}
+	else
+	{
+		//Particulier
+		cout << "TYPE: PARTICULIER" << endl;
+	}
+
+	cout << "Druk op enter om verder te gaan...";
+	cin.get();
+
 	return;
 }
 
@@ -425,6 +541,39 @@ void addArtikelMenu()
 
 void deleteArtikelMenu()
 {
+	int in;
+	
+	system("cls");
+	cout << "*********************************************" << endl;
+	cout << "*              ARTIKEL DELETEN            A *" << endl;
+	cout << "*                                           *" << endl;
+	cout << "Geef het artikelnummer: ";
+	in = getNumericInput();
+
+	Artikel* art = BC->getArtikel(in);
+	if (art == nullptr)
+	{
+		cout << in << " is geen geldig artikel numer!" << endl;
+	}
+	else
+	{
+		cout << "Bent u zeker dat u '" << art->getNaam() << "' wilt deleten?" << endl;
+		cout << "(y/n): ";
+		char temp;
+		cin >> temp;
+		cin.get();
+		if (temp == 'y')
+		{
+			char tempstorn[20];
+			strcpy_s(tempstorn, art->getNaam());
+			BC->deleteArtikel(in);
+			art = nullptr;
+			cout << tempstorn << "is succesvol verwijderd" << endl;
+		}
+	}
+
+	cout << endl << "Druk op enter om terug te gaan...";
+	cin.get();
 	return;
 }
 
@@ -523,7 +672,6 @@ void viewStockMenu()
 				}
 			}
 
-
 			cout << endl << "Druk op enter om verder te gaan...";
 			cin.get();
 			break;
@@ -537,12 +685,259 @@ void viewStockMenu()
 	return;
 }
 
-
 void factuurMenu()
 {
+	int in;
+	Factuur** facts = BC->getFacturen();
+
+	do {
+		system("cls");
+		cout << "*********************************************" << endl;
+		cout << "*                 FACTUREN                A *" << endl;
+		cout << "*                                           *" << endl;
+		cout << "* 1. Bekijken                               *" << endl;
+		Factuur* huidig = BC->getHuidigFactuur();
+		if(huidig == nullptr)
+			cout << "* 2. NIEUW factuur aanmaken                 *" << endl;
+		else
+			cout << "* 2. Huidig factuur beheren                 *" << endl;
+		cout << "* 3. Zoeken op klant                        *" << endl;
+		cout << "* 4. Opsommen (alle weergeven)              *" << endl;
+		cout << "*                                           *" << endl;
+		cout << "* 0. Stop                                   *" << endl;
+		cout << "*********************************************" << endl;
+		cout << "Uw Keuze: ";
+
+		in = getNumericInput();
+		switch (in)
+		{
+		case 0:// Quit
+			break;
+		case 1:
+			bekijkFactuur();
+			break;
+		case 2:
+			manageHuidigFactuur();
+			break;
+		case 3:
+			break;
+		case 4:
+			//Alle facturen
+			system("cls");
+			cout << "*********************************************" << endl;
+			cout << "*             FACTUREN OPSOMMEN           A *" << endl;
+			cout << "*                 ---------                 *" << endl;
+			cout << "FACT NUMMER   FACT #ARTS  FACT PRIJS   FACT DATUM" << endl << endl;
+
+			for (int i = 0; i < MAX_FACTUREN; i++)
+			{
+				if (facts[i] == nullptr)
+					continue;
+
+				Artikel** artikels = facts[i]->getArtikels();
+
+				cout << setw(3) << i << ":" << setw(10);
+				int cnt = 0;
+				for (int i = 0; i < MAX_ARTIKELEN_PER_FACTUUR; i++)
+				{
+					if (artikels[cnt] == nullptr)
+						continue;
+					cnt++;
+				}
+
+				cout << cnt << " artikels" << setw(10) << facts[i]->getTotaalPrijs();
+				cout << setw(25) << facts[i]->getDatum();
+				cout << endl;
+			}
+
+			cout << endl << "Druk op enter om door te gaan" << endl;
+			cin.get();
+			break;
+		default:
+			printVerkeerdeInput();
+			break;
+		}
+		BC->save();
+	} while (in != 0);
 	return;
 }
 
+void bekijkFactuur()
+{
+	int in;
+
+	system("cls");
+	cout << "*********************************************" << endl;
+	cout << "*                 FACTUUR                 A *" << endl;
+	cout << "*                                           *" << endl;
+	cout << "Geef het factuur nummer: ";
+
+	in = getNumericInput();
+	Factuur* fact = BC->getFactuur(in);
+	if (fact == nullptr)
+	{
+		cout << endl << "Factuur niet gevonden!" << endl;
+		cout << endl << "Druk op enter om door te gaan" << endl;
+		cin.get();
+		return;
+	}
+
+	cout << endl << "#############################################" << endl;
+	cout << "ID: " << in << endl;
+	cout << "Datum: " << fact->getDatum() << endl;
+	cout << "Klant: " << fact->getKlant()->getNaam() << endl << "ADR: " << fact->getKlant()->getAdres() << endl;
+	cout << "Totaalprijs: " << fact->getTotaalPrijs() << endl;
+
+	cout << "Artikels:" << endl;
+	Artikel** arts = fact->getArtikels();
+	for (int i = 0; i < MAX_ARTIKELEN_PER_FACTUUR; i++)
+	{
+		if (arts[i] == nullptr)
+			continue;
+
+		cout << setw(3) << i << ":" << setw(23) << arts[i]->getNaam();
+		if (arts[i]->getType() == 0)
+		{
+			cout << setw(10) << "'BAND'";
+		}
+		else
+		{
+			cout << setw(10) << "'VELG'";
+		}
+
+		cout << setw(5) << arts[i]->getPrijs();
+		cout << endl;
+	}
+
+	cout << endl << "Druk op enter om door te gaan" << endl;
+	cin.get();
+}
+
+void manageHuidigFactuur()
+{
+	Factuur* huidig = BC->getHuidigFactuur();
+	Artikel* art = nullptr;
+	int in, artid;
+	char keuze;
+
+	system("cls");
+	cout << "*********************************************" << endl;
+	cout << "*                OPEN FACTUUR             A *" << endl;
+	cout << "*                 ---------                 *" << endl;
+	if (huidig == nullptr)
+	{
+		//We hebben nog geen open factuur
+		cout << "Geef het klantennummer voor de factuur: ";
+		in = getNumericInput();
+
+		Klant* klan = BC->getKlant(in);
+		if (klan == nullptr)
+		{
+			cout << endl << "Klant niet gevonden!" << endl;
+			cout << endl << "Druk op enter om terug te gaan...";
+			cin.get();
+			return;
+		}
+
+		huidig = BC->openFactuur(klan);
+	}
+
+	//Factuur zou ier open moeten zijn
+	do {
+		system("cls");
+		cout << "*********************************************" << endl;
+		cout << "*              HUIDIG FACTUUR             A *" << endl;
+		cout << "*                 ---------                 *" << endl;
+		cout << "KLANT: " << huidig->getKlant()->getNaam() << endl <<endl;
+		cout << "*********************************************" << endl;
+		cout << "Artikels:" << endl;
+		Artikel** arts = huidig->getArtikels();
+		float totaal = 0;
+		for (int i = 0; i < MAX_ARTIKELEN_PER_FACTUUR; i++)
+		{
+			if (arts[i] == nullptr)
+				continue;
+
+			cout << setw(3) << i << ":" << setw(23) << arts[i]->getNaam();
+			if (arts[i]->getType() == 0)
+			{
+				cout << setw(10) << "'BAND'";
+			}
+			else
+			{
+				cout << setw(10) << "'VELG'";
+			}
+
+			cout << setw(4) << arts[i]->getPrijs() << " €";
+			cout << endl;
+			totaal += arts[i]->getPrijs();
+		}
+		cout << "TOTAAL (zonder korting): " << totaal;
+		cout << endl;
+		cout << "*********************************************" << endl;
+		cout << "* 1. Artikel toevoegen                      *" << endl;
+		cout << "* 2. Artikel verwijderen                    *" << endl;
+		cout << "* 3. Factuur sluiten                        *" << endl;
+		cout << "* 4. Factuur annuleren (Discard)            *" << endl;
+		cout << "*                                           *" << endl;
+		cout << "* 0. Terug                                   *" << endl;
+		cout << "*********************************************" << endl;
+		cout << "Uw Keuze: ";
+
+		in = getNumericInput();
+		switch (in)
+		{
+		case 0:// Quit
+			break;
+		case 1:
+			cout << endl << "Geef het artikelnumer dat u wilt toevoegen: " << endl;
+			artid = getNumericInput();
+			art = BC->getArtikel(artid);
+			if (art == nullptr)
+			{
+				cout << endl << "Artikel niet gevonden!" << endl;
+				cout << endl << "Druk op enter om verder te gaan.";
+				cin.get();
+			}
+			else
+			{
+				huidig->addArtikel(art);
+				cout << endl << "Artikel '" << art->getNaam() << "' is toegevoegd";
+				cout << endl << "Druk op enter om verder te gaan.";
+				cin.get();
+			}
+			break;
+		case 2:
+			break;
+		case 3:
+			cout << endl << "Bent u zeker dat de factuur gesloten mag worden? (y/n): ";
+			cin >> keuze;
+			cin.get();
+
+			if (keuze == 'y')
+			{
+				BC->sluitHuidigFactuur(true);
+				in = 0;
+			}
+			break;
+		case 4:
+			cout << endl << "Bent u zeker dat de factuur weg mag? (y/n): ";
+			cin >> keuze;
+			cin.get();
+
+			if (keuze == 'y')
+			{
+				BC->sluitHuidigFactuur(false);
+				in = 0;
+			}
+			break;
+		default:
+			printVerkeerdeInput();
+			break;
+		}
+	} while (in != 0);
+	return;
+}
 
 //USERS
 void userMenu()

@@ -22,7 +22,11 @@ void printArtikelM();
 void printZoekArtM();
 
 void adminKlantenMenu();
+void viewKlant();
+void printKlantM();
 
 void factuurMenu();
+void bekijkFactuur();
+void manageHuidigFactuur();
 
 void userMenu();
